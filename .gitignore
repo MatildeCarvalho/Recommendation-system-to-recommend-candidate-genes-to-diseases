@@ -1,0 +1,10 @@
+TABELAS/
+data/*.sql
+data/*.db
+data/*.ME
+data/analisy.py
+model/__pycache__/
+model/toprec.py
+*.db
+export.py
+exportcsv.py
