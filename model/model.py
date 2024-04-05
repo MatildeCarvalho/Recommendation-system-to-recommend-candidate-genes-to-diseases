@@ -71,4 +71,4 @@ def validate(model, criterion, val_loader, device):
 
     avg_loss = total_loss / len(val_loader)
     return avg_loss
-
+##
