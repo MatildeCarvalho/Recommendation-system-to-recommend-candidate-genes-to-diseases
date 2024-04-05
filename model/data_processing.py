@@ -193,4 +193,4 @@ def process_data(sqlite_file):
         
         # Passar os dados para o modelo (substitua isso pela parte do seu código onde o modelo é treinado)
         #output = model(diseases, genes)
-
+##
