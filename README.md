@@ -2,7 +2,9 @@
 
 # Recommendation System for Candidate Genes in Diseases
 
-This repository contains the implementation of a recommendation system, named RecSysModel, designed to suggest candidate genes for diseases based on scientific evidence. This project is a part of the Master's thesis in [Nome do Seu Programa de Mestrado] at [Nome da Sua Universidade].
+This repository contains the implementation of a recommendation system, named RecSysModel, designed to suggest candidate genes for diseases based on scientific evidence. 
+
+This project is a part of the Master's thesis in [Nome do Seu Programa de Mestrado] at [Nome da Sua Universidade].
 
 ## Thesis
 
