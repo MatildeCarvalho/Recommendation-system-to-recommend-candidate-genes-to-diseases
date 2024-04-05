@@ -34,7 +34,7 @@ The work presented here is a component of my Master's thesis titled *"Recommenda
 1. Install pytorch and all its dependencies
 2. Have a SQLite database with data on Diseases, Genes and their interactions. 
 3. Change the file paths to the corresponding ones. 
-4. Download the database at this [link.] (10.6084/m9.figshare.25551849)
+4. Download the database at this [link.](10.6084/m9.figshare.25551849)
 <!-- 4. Execute `main.py` para instalar as dependências. -->
 
 ## How to use
