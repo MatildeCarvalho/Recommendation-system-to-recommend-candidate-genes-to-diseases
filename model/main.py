@@ -158,3 +158,4 @@ if __name__ == "__main__":
     # Exemplo de chamada da função
     user_est_true = build_user_est_true(model, test_loader, lbl_diseases, lbl_genes, verbose=False, csv_filename='DATA\\data\\results.csv')
 
+##
