@@ -38,7 +38,7 @@ The work presented here is a component of my Master's thesis titled *"Recommenda
 
 ## How to use
 
-Run the [main.py](main.py) file. 
+Run the [main.py](model/main.py) file. 
 
 You must provide credits to the original author including the author's name and a link to the original project in all copies or substantial portions of the Software and Code.
 
