@@ -11,13 +11,16 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import matplotlib.pyplot as plt 
 import torch.nn.functional as F
-from evaluate import calculate_rmse, calculate_precision_recall, build_user_est_true
+from evaluate import EvaluateModel
+import joblib
+
 
 import numpy as np
 
 if __name__ == "__main__":
     # Processamento dos dados e criação dos datasets
-    train_dataset, val_dataset, test_dataset, lbl_diseases, lbl_genes = process_data("DATA\data\DiseaseGene.db")
+    train_dataset, val_dataset, test_dataset, lbl_diseases, lbl_genes = process_data("data\DiseaseGene.db")
+
 
     # Verificar se há disponibilidade de GPU e definir o dispositivo
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -114,7 +117,7 @@ if __name__ == "__main__":
     plt.title('Train and Validation Loss')
     plt.legend()
     plt.grid(True)
-    plt.savefig('DATA\\TABELAS\\graficos\\loss.png')
+    plt.savefig('model\\storage\\images\\loss.png')
     plt.show()
 
     # Plotando o gráfico de RMSE
@@ -126,20 +129,35 @@ if __name__ == "__main__":
     plt.title('Train and Validation RMSE')
     plt.legend()
     plt.grid(True)
-    plt.savefig('DATA\\TABELAS\\graficos\\rsme.png')
+    plt.savefig('model\\storage\\images\\rsme.png')
     plt.show()
 
     # Salvar o modelo em um arquivo
-    caminho_arquivo = 'DATA\model\model.pth'  # Nome do arquivo onde o modelo será salvo
+    caminho_arquivo = 'model\storage\model.pth'  # Nome do arquivo onde o modelo será salvo
     torch.save(model.state_dict(), caminho_arquivo)
 
 
-    rms = calculate_rmse(model, test_loader)
+
+
+
+    # Supondo que você já tenha importado as bibliotecas necessárias e criado seu modelo e conjunto de dados de teste
+
+    # Crie uma instância de EvaluateModel
+    evaluator = EvaluateModel(model, test_loader, lbl_diseases, lbl_genes)
+
+    # Calcular RMSE
+    rms = evaluator.calculate_rmse()
     print(f"Root Mean Squared Error (RMSE): {rms}")
 
-    precisions, recalls = calculate_precision_recall(model, test_loader, k=5, threshold=0.973373)
+    # Calcular precisão e recall em k
+    precisions, recalls = evaluator.calculate_precision_recall_at_k(k=5, threshold=0.973373)
     print(f"Precisions: {precisions}")
     print(f"Recalls: {recalls}")
+ 
+
+    # Construir e salvar as estimativas do usuário
+    user_estimations = evaluator.write_csv(csv_filename="data\\file_storage\\results.csv")
+
 
     k_values = range(1, 6)  # Valores de k de 1 a 5
 
@@ -152,10 +170,15 @@ if __name__ == "__main__":
     plt.ylabel('Metric Value')
     plt.legend()
     #plt.grid(True)
-    plt.savefig('DATA\TABELAS\graficos\precissionrecall.png')  # Salva o gráfico como um arquivo PNG
+    plt.savefig('model\\storage\\images\\precissionrecall.png')  # Salva o gráfico como um arquivo PNG
     plt.show()
 
-    # Exemplo de chamada da função
-    user_est_true = build_user_est_true(model, test_loader, lbl_diseases, lbl_genes, verbose=False, csv_filename='DATA\\data\\results.csv')
+    joblib.dump(lbl_diseases, 'model\storage\lbl_diseases.pkl')
+    joblib.dump(lbl_genes, 'model\storage\lbl_genes.pkl')
 
-##
+    # Suponha que você já tenha criado uma instância de EvaluateModel chamada evaluator
+
+
+
+
+

@@ -8,3 +8,8 @@ model/toprec.py
 *.db
 export.py
 exportcsv.py
+model/storage/old/
+model/storage/images/
+testes.py
+
+

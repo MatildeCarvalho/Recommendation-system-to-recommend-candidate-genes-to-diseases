@@ -119,9 +119,9 @@ def save_datasets(train_df, val_df, test_df, lbl_diseases, lbl_genes):
         test_df.drop(columns=['0'], inplace=True)
 
     # Salvando apenas as colunas necessárias
-    train_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('DATA\\data\\train.csv', index=False)
-    val_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('DATA\\data\\validation.csv', index=False)
-    test_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('DATA\\data\\test.csv', index=False)
+    train_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('data\\file_storage\\train.csv', index=False)
+    val_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('data\\file_storage\\validation.csv', index=False)
+    test_df[['mappingDOID', 'geneNID', 'sum_EI', 'mean_EI']].to_csv('data\\file_storage\\test.csv', index=False)
 
 def process_data(sqlite_file):
     df = load_data_from_sqlite(sqlite_file)
@@ -193,4 +193,3 @@ def process_data(sqlite_file):
         
         # Passar os dados para o modelo (substitua isso pela parte do seu código onde o modelo é treinado)
         #output = model(diseases, genes)
-##
