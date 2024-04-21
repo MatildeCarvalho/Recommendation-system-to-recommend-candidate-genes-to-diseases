@@ -5,43 +5,41 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 
 class EvaluateModel:
-    def __init__(self, model, test_loader, lbl_diseases=None, lbl_genes=None):
+    def __init__(self, model, test_loader, lbl_diseases=None, lbl_genes=None, device=None):
         self.model = model
         self.test_loader = test_loader
         self.lbl_diseases = lbl_diseases
         self.lbl_genes = lbl_genes
+        self.device = device
 
         self.model_output_list = []
         self.target_rating_list = []
         self.user_ratings = defaultdict(list)
 
-        self.evaluate()
+        self.evaluate(device=self.device)
 
-    def evaluate(self):
+    def evaluate(self, device=None):
         self.model.eval()
 
         with torch.no_grad():
             for i, batched_data in enumerate(self.test_loader): 
-                diseases, genes, ei = batched_data
+                diseases, genes, ei = batched_data['diseases'].to(device), batched_data['genes'].to(device), batched_data['ei'].to(device)
                 model_output = self.model(diseases, genes)
                 model_output = model_output.view(-1, 1)
 
-                users = batched_data[0]
-                movies = batched_data[1]
-                ratings = batched_data[2]
 
-                for i in range(len(users)):
-                    user_id = users[i].item()
-                    movie_id = movies[i].item() 
+                for i in range(len(diseases)):
+                    user_id = diseases[i].item()
+                    movie_id = genes[i].item() 
                     pred_rating = model_output[i].item()
-                    true_rating = ratings[i].item()
+                    true_rating = ei[i].item()
 
                     self.model_output_list.append(pred_rating)
                     self.target_rating_list.append(true_rating)
                     self.user_ratings[user_id].append((movie_id, pred_rating, true_rating))
 
-    def calculate_rmse(self, squared=True):
-        rms = mean_squared_error(self.target_rating_list, self.model_output_list, squared=True)
+    def calculate_rmse(self, squared=False):
+        rms = mean_squared_error(self.target_rating_list, self.model_output_list, squared=False)
         return rms
     
     def calculate_precision_recall_at_k(self, k=5, threshold=0.973373):
@@ -96,6 +94,35 @@ class EvaluateModel:
                 data.to_csv(csv_filename, index=False)
 
         print(f"The file '{csv_filename}' was written successfully")
+
+    def top_k_recommendations(self, raw_disease_id, k=5):
+        """
+        Retorna as top K recomendações para uma doença específica.
+
+        :param raw_disease_id: ID da doença sem codificação
+        :param k: Número de recomendações desejadas (padrão: 5)
+        :return: Lista de tuplas com (gene_id, predicted_rating)
+        """
+        recommendations = []
+        
+        try:
+            # Verifique se o ID está no LabelEncoder e obtenha o valor codificado
+            encoded_disease_id = self.lbl_diseases.transform([raw_disease_id])[0]
+        except ValueError:
+            print(f"O ID {raw_disease_id} não está no LabelEncoder. Ação necessária.")
+            return recommendations  # Retorna uma lista vazia ou algum valor padrão
+
+        # Encontra as previsões para a doença específica com base no ID codificado
+        for (disease, gene, predicted, true) in self.model_output_list:
+            if disease == encoded_disease_id:
+                recommendations.append((gene, predicted))
+
+        # Ordena pela classificação prevista em ordem decrescente
+        recommendations.sort(key=lambda x: x[1], reverse=True)
+        
+        # Retorna os top K
+        return recommendations[:k]
+
 
 
     

@@ -31,9 +31,9 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
     return precision_at_k, recall_at_k
 
 # Carregar os dados de treinamento e teste
-train_data = pd.read_csv('train_filtered.csv')
-validation_data = pd.read_csv('data\\validation.csv')
-test_data = pd.read_csv('data\\test.csv')
+train_data = pd.read_csv('data\\file_storage\\train.csv')
+validation_data = pd.read_csv('data\\file_storage\\validation.csv')
+test_data = pd.read_csv('data\\file_storage\\test.csv')
 
 
 # Convertendo as colunas de 'mappingDOID' e 'geneNID' em conjuntos (sets)

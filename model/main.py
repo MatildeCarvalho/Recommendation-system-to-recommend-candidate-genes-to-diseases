@@ -32,9 +32,9 @@ if __name__ == "__main__":
     val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
     # Enviar os dados para a GPU, se disponível
-    train_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in train_loader]
-    val_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in val_loader]
-    test_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in test_loader]
+    #train_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in train_loader]
+    #val_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in val_loader]
+    #test_loader = [(batch['diseases'].to(device), batch['genes'].to(device), batch['ei'].to(device)) for batch in test_loader]
 
 
     model = RecSysModel(n_diseases=len(lbl_diseases.classes_), 
@@ -56,44 +56,23 @@ if __name__ == "__main__":
 
     train_losses = []
     val_losses = []
-    train_rmse = []
-    val_rmse = []
+    train_rmses = []
+    val_rmses = []
 
     for epoch_i in range(epochs):
-        train_loss = train(model, optimizer, loss_func, train_loader, device)
-        val_loss = validate(model, loss_func, val_loader, device)
+        train_loss, train_rmse = train(model, optimizer, loss_func, train_loader, device, verbose=False)
+        val_loss, val_rmse = validate(model, loss_func, val_loader, device, verbose=False)
         
         train_losses.append(train_loss)
         val_losses.append(val_loss)
 
-        # Calculando RMSE
-        model.eval()
-        with torch.no_grad():
-            train_rmse_values = []
-            val_rmse_values = []
-            
-            for batch_idx, (diseases, genes, ei) in enumerate(train_loader):
-                diseases, genes, ei = diseases.to(device), genes.to(device), ei.to(device)
-                output = model(diseases, genes)
-                print(output)
-                output = output.view(-1, 1) 
-                rating = ei.view(len(ei), -1).to(torch.float32).detach()
-                train_rmse_values.append(model.rmse(output, rating).item())
-
-            for val_batch_idx, (val_diseases, val_genes, val_ei) in enumerate(val_loader):
-                val_diseases, val_genes, val_ei = val_diseases.to(device), val_genes.to(device), val_ei.to(device)
-                val_output = model(val_diseases, val_genes)
-                val_output = val_output.view(-1, 1)
-                val_rating = val_ei.view(len(val_ei), -1).to(torch.float32).detach()
-                val_rmse_values.append(model.rmse(val_output, val_rating).item())
-        
-        train_rmse.append(np.mean(train_rmse_values))
-        val_rmse.append(np.mean(val_rmse_values))
+        train_rmses.append(train_rmse)
+        val_rmses.append(val_rmse)
 
         # Liberar a memória da GPU
         torch.cuda.empty_cache()
         
-        print(f"Epoch [{epoch_i + 1}/{epochs}], Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}, Train RMSE: {train_rmse[-1]:.4f}, Validation RMSE: {val_rmse[-1]:.4f}")
+        print(f"Epoch [{epoch_i + 1}/{epochs}], Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}, Train RMSE: {train_rmse:.4f}, Validation RMSE: {val_rmse:.4f}")
 
         # "Early stopping" - Verifica se a perda de validação melhorou
         if val_loss < best_val_loss:
@@ -123,8 +102,8 @@ if __name__ == "__main__":
 
     # Plotando o gráfico de RMSE
     plt.figure(figsize=(10, 5))
-    plt.plot(train_rmse, label='Train RMSE')
-    plt.plot(val_rmse, label='Validation RMSE')
+    plt.plot(train_rmses, label='Train RMSE')
+    plt.plot(val_rmses, label='Validation RMSE')
     plt.xlabel('Epochs')
     plt.ylabel('RMSE')
     plt.title('Train and Validation RMSE')
@@ -144,7 +123,7 @@ if __name__ == "__main__":
     # Supondo que você já tenha importado as bibliotecas necessárias e criado seu modelo e conjunto de dados de teste
 
     # Crie uma instância de EvaluateModel
-    evaluator = EvaluateModel(model, test_loader, lbl_diseases, lbl_genes)
+    evaluator = EvaluateModel(model, test_loader, lbl_diseases, lbl_genes, device)
 
     # Calcular RMSE
     rms = evaluator.calculate_rmse()
@@ -178,6 +157,19 @@ if __name__ == "__main__":
     joblib.dump(lbl_genes, 'model\storage\lbl_genes.pkl')
 
     # Suponha que você já tenha criado uma instância de EvaluateModel chamada evaluator
+
+    raw_disease_id = "1234"
+
+    # Obter as top 5 recomendações para essa doença
+    top_k = evaluator.top_k_recommendations(raw_disease_id, k=5)
+
+    # Imprimir as recomendações
+    print("Top 5 recomendações para a doença", raw_disease_id)
+    for i, (gene_id, predicted_rating) in enumerate(top_k):
+        print(f"{i+1}. Gene: {gene_id}, Rating Previsto: {predicted_rating:.2f}")
+
+
+
 
 
 
