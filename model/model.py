@@ -31,6 +31,7 @@ class RecSysModel(nn.Module):
 def train(model, optimizer, criterion, train_loader, device):
     model.train()
     total_loss = 0
+    rmse_values = []
 
     for batch_idx, (diseases, genes, ei) in enumerate(train_loader):
         diseases, genes, ei = diseases.to(device), genes.to(device), ei.to(device)
