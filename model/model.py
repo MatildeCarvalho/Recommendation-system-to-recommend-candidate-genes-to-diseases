@@ -61,7 +61,7 @@ def train(model, optimizer, criterion, train_loader, device, verbose=True):
     return avg_loss, rmse
 
 
-def validate(model, criterion, val_loader, device, verbose=True):
+def validate(model, criterion, val_loader, device, verbose=True, check_consistency=True):
     model.eval()
     total_loss = 0
 
@@ -82,15 +82,28 @@ def validate(model, criterion, val_loader, device, verbose=True):
             if verbose and (val_batch_idx % 500 == 0):  # Mostra logs a cada 500 batches
                 print(f'Batch {val_batch_idx + 1}/{len(val_loader)} - Loss: {val_loss.item()}')
 
-        # Usar o próprio output em vez de `sum` e `item` para maior precisão
-        model_output_list.append(val_output.mean().cpu().item())
-        rating_list.append(rating.mean().cpu().item())
+            # Usar o próprio output em vez de `sum` e `item` para maior precisão
+            model_output_list.append(val_output.mean().cpu().item())
+            rating_list.append(rating.mean().cpu().item())
 
    # Calcular média de perda
     avg_loss = total_loss / len(val_loader)
 
     # Calcular RMSE usando sklearn
     rmse = metrics.mean_squared_error(rating_list, model_output_list, squared=False)
+
+    # Verificação opcional do comprimento das listas
+    if check_consistency:
+        assert len(model_output_list) == len(rating_list), "Comprimento das listas de previsões e valores verdadeiros é diferente."
+
+        # Formatos das previsões e valores verdadeiros
+        print("Primeiros 10 valores previstos:", model_output_list[:10])
+        print("Primeiros 10 valores verdadeiros:", rating_list[:10])
+        print("Formato das previsões:", val_output.shape)
+        print("Formato dos valores verdadeiros:", rating.shape)
+
+    if check_consistency:
+        assert val_output.shape == rating.shape, "Formato das previsões e valores verdadeiros é diferente."
 
     return avg_loss, rmse
 
