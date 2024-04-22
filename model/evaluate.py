@@ -97,78 +97,6 @@ class EvaluateModel:
 
         print(f"The file '{csv_filename}' was written successfully")
 
-
-
-Aqui estão algumas sugestões para melhorar sua implementação das classes EvaluateModel e TopKRecommendations:
-
-Estrutura da Classe EvaluateModel
-Responsabilidade Única: A classe EvaluateModel deve se concentrar apenas na avaliação do modelo. Se você planeja usar essa classe para armazenar previsões e verdadeiros valores para recomendar posteriormente, isso pode levar a uma falta de coesão.
-Desacoplamento da Lógica de Avaliação: Em vez de fazer a avaliação durante a inicialização da classe, considere separar a lógica de avaliação. Isso dá mais flexibilidade para avaliar com diferentes parâmetros ou com um modelo atualizado.
-Melhorias na Classe EvaluateModel
-Parâmetros Opcionais no Construtor: Torne o parâmetro device opcional para maior flexibilidade.
-Separar Avaliação de Armazenamento de Resultados: Ao fazer a avaliação, armazene os resultados em uma estrutura de dados, mas mantenha as duas responsabilidades separadas.
-Adicionar Comentários e Documentação: Comente mais detalhes sobre o que cada parte do código faz, especialmente em métodos complexos como calculate_precision_recall_at_k.
-Classe TopKRecommendations
-Responsabilidade: A responsabilidade dessa classe é gerar recomendações. Garanta que ela não realiza operações de avaliação ou cálculo de métricas.
-Tratamento de Erros: É bom que a função get_topk_recommendations retorne uma mensagem apropriada quando não há recomendações. Outra opção é lançar uma exceção customizada, como ValueError.
-Implementações Aprimoradas
-Aqui estão algumas melhorias no código:
-
-Classe EvaluateModel Melhorada
-python
-Copy code
-import torch
-from collections import defaultdict
-from sklearn.metrics import mean_squared_error
-import csv
-import pandas as pd
-
-
-class EvaluateModel:
-    def __init__(self, model, test_loader, lbl_diseases=None, lbl_genes=None, device=None):
-        self.model = model
-        self.test_loader = test_loader
-        self.lbl_diseases = lbl_diseases
-        self.lbl_genes = lbl_genes
-        self.device = device
-
-        # Inicializa listas para resultados
-        self.model_output_list = []
-        self.target_rating_list = []
-        self.user_ratings = defaultdict(list)
-
-    def evaluate(self):
-        self.model.eval()
-        with torch.no_grad():
-            for batch in self.test_loader:
-                diseases = batch['diseases'].to(self.device)
-                genes = batch['genes'].to(self.device)
-                ei = batch['ei'].to(self.device)
-
-                model_output = self.model(diseases, genes).view(-1, 1)
-                
-                for d, g, out, true in zip(diseases, genes, model_output, ei):
-                    user_id = d.item()
-                    gene_id = g.item()
-                    pred_rating = out.item()
-                    true_rating = true.item()
-
-                    self.model_output_list.append(pred_rating)
-                    self.target_rating_list.append(true_rating)
-                    self.user_ratings[user_id].append((gene_id, pred_rating, true_rating))
-
-    def calculate_rmse(self):
-        return mean_squared_error(self.target_rating_list, self.model_output_list, squared=False)
-
-    def write_csv(self, csv_filename):
-        with open(csv_filename, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Disease ID', 'Gene ID', 'Predicted Rating', 'True Rating'])
-
-            for user_id, ratings in self.user_ratings.items():
-                for rating in ratings:
-                    writer.writerow([user_id, rating[0], rating[1], rating[2]])
-
 class TopKRecommendations:
     def __init__(self, model_evaluator, lbl_diseases, lbl_genes, k=5):
         self.model_evaluator = model_evaluator
@@ -192,4 +120,3 @@ class TopKRecommendations:
                 pred_rating,
                 true_rating,
             )
-            for gene
