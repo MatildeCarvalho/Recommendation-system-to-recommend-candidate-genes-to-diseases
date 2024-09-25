@@ -97,5 +97,26 @@ class EvaluateModel:
 
         print(f"The file '{csv_filename}' was written successfully")
 
+class TopKRecommendations:
+    def __init__(self, model_evaluator, lbl_diseases, lbl_genes, k=5):
+        self.model_evaluator = model_evaluator
+        self.lbl_diseases = lbl_diseases
+        self.lbl_genes = lbl_genes
+        self.k = k
 
-    
+    def get_topk_recommendations(self, disease_id):
+        if disease_id not in self.model_evaluator.user_ratings:
+            raise ValueError(f"No recommendations found for disease ID: {disease_id}")
+
+        disease_ratings = self.model_evaluator.user_ratings[disease_id]
+        disease_ratings.sort(key=lambda x: x[1], reverse=True)  # Ordenar por predição
+
+        top_k_recommendations = disease_ratings[:self.k]  # Obter top K recomendações
+
+        return [
+            (
+                self.lbl_diseases.inverse_transform([disease_id])[0],
+                self.lbl_genes.inverse_transform([gene_id])[0],
+                pred_rating,
+                true_rating,
+            )

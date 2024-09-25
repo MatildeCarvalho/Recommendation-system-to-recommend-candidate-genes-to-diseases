@@ -75,6 +75,7 @@ if __name__ == "__main__":
             for batch_idx, (diseases, genes, ei) in enumerate(train_loader):
                 diseases, genes, ei = diseases.to(device), genes.to(device), ei.to(device)
                 output = model(diseases, genes)
+                print(output)
                 output = output.view(-1, 1) 
                 rating = ei.view(len(ei), -1).to(torch.float32).detach()
                 train_rmse_values.append(model.rmse(output, rating).item())
