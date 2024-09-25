@@ -8,7 +8,7 @@ This repository contains the implementation of a recommendation system, named Re
 
 ## Thesis
 
-The work presented here is a component of my Master's thesis titled *"Recommendation system to recommend candidate genes for diseases"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](link_para_a_tese).
+The work presented here is a component of my Master's thesis titled *"Candidate disease gene prediction: a deep learning approach"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](link_para_a_tese).
 
 ## Key Features:
 
@@ -34,7 +34,7 @@ The work presented here is a component of my Master's thesis titled *"Recommenda
 1. Install pytorch and all its dependencies
 2. Have a SQLite database with data on Diseases, Genes and their interactions. 
 3. Change the file paths to the corresponding ones. 
-4. Download the database at this [link.](10.6084/m9.figshare.25551849)
+4. Download the database at this [link.](https://figshare.com/s/2c23925a10f882381572)
 <!-- 4. Execute `main.py` para instalar as dependências. -->
 
 ## How to use
