@@ -78,6 +78,7 @@ def create_datasets(train_df, val_df, test_df):
     #print(train_df['mappingDOID'].values)
     #print(type(train_df['mappingDOID'].values))
     train_dataset = DiseaseGeneDatase(train_df['mappingDOID'].values, train_df['geneNID'].values, train_df['mean_EI'].values)
+    # print(f'Tamanho do conjunto de dados de treinamento: {train_dataset.__len__()}')
     val_dataset = DiseaseGeneDatase(val_df['mappingDOID'].values, val_df['geneNID'].values, val_df['mean_EI'].values)
     test_dataset = DiseaseGeneDatase(test_df['mappingDOID'].values, test_df['geneNID'].values, test_df['mean_EI'].values)
 

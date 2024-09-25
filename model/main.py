@@ -1,4 +1,4 @@
-from model import RecSysModel, train, validate
+from model import *
 from data_processing import process_data
 import torch
 import torch.nn as nn
@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import matplotlib.pyplot as plt 
 import torch.nn.functional as F
-from evaluate import EvaluateModel
+from evaluate import EvaluateModel, TopKRecommendations
 import joblib
 
 
@@ -156,17 +156,18 @@ if __name__ == "__main__":
     joblib.dump(lbl_diseases, 'model\storage\lbl_diseases.pkl')
     joblib.dump(lbl_genes, 'model\storage\lbl_genes.pkl')
 
-    # Suponha que você já tenha criado uma instância de EvaluateModel chamada evaluator
+    topk_recommender = TopKRecommendations(evaluator, lbl_diseases,lbl_genes, k=5)
 
-    raw_disease_id = "1234"
+    # ID da doença que queremos obter as top K recomendações
+    disease_id = 2  # Exemplo de ID
 
-    # Obter as top 5 recomendações para essa doença
-    top_k = evaluator.top_k_recommendations(raw_disease_id, k=5)
+    # Obter as top K recomendações
+    top_k_results = topk_recommender.get_topk_recommendations(disease_id)
 
-    # Imprimir as recomendações
-    print("Top 5 recomendações para a doença", raw_disease_id)
-    for i, (gene_id, predicted_rating) in enumerate(top_k):
-        print(f"{i+1}. Gene: {gene_id}, Rating Previsto: {predicted_rating:.2f}")
+    # Exibir os resultados com os rótulos
+    print("Top K Recomendações para a doença:", top_k_results[0][0])  # Rótulo da doença
+    for disease_label, gene_id, pred_rating, true_rating in top_k_results:
+        print(f"Gene ID: {gene_id}, Previsão: {pred_rating:.2f}, Verdadeiro: {true_rating:.2f}")
 
 
 
