@@ -35,13 +35,13 @@ def train(model, optimizer, criterion, train_loader, device, verbose=True):
     for batch_idx, batch_train in enumerate(train_loader):
         diseases, genes, ei = batch_train['diseases'].to(device), batch_train['genes'].to(device), batch_train['ei'].to(device)
 
-        optimizer.zero_grad()
         output = model(diseases, genes).view(-1, 1)  # Certifique-se de que o modelo retorna no formato certo
         rating = ei.to(torch.float32).view(len(ei), -1)  # Detach e reshape apenas uma vez
 
         loss = criterion(output, rating)  # Calcular a perda
         total_loss += loss.sum().item()  # Use item() para extrair valor escalar
 
+        optimizer.zero_grad()
         loss.backward()  # Executar backpropagation
         optimizer.step()  # Atualizar pesos
 
