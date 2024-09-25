@@ -1,4 +1,4 @@
-from model import *
+from model import RecSysModel, train, validate
 from data_processing import process_data
 import torch
 import torch.nn as nn

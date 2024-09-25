@@ -3,10 +3,12 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+from sklearn import metrics
 from sklearn import preprocessing
 import numpy as np
 import sqlite3
 from data_processing import process_data
+
 
 
 
@@ -30,8 +32,14 @@ def train(model, optimizer, criterion, train_loader, device, verbose=True):
     total_loss = 0
     model_output_list, rating_list = [], []  # Para acumular RMSE para cada lote
 
+def train(model, optimizer, criterion, train_loader, device, verbose=True):
+    total_loss = 0
+    model_output_list, rating_list = [], []  # Para acumular RMSE para cada lote
+
     model.train()
 
+    for batch_idx, batch_train in enumerate(train_loader):
+        diseases, genes, ei = batch_train['diseases'].to(device), batch_train['genes'].to(device), batch_train['ei'].to(device)
     for batch_idx, batch_train in enumerate(train_loader):
         diseases, genes, ei = batch_train['diseases'].to(device), batch_train['genes'].to(device), batch_train['ei'].to(device)
 
@@ -41,19 +49,35 @@ def train(model, optimizer, criterion, train_loader, device, verbose=True):
 
         loss = criterion(output, rating)  # Calcular a perda
         total_loss += loss.sum().item()  # Use item() para extrair valor escalar
+        loss = criterion(output, rating)  # Calcular a perda
+        total_loss += loss.sum().item()  # Use item() para extrair valor escalar
 
         loss.backward()  # Executar backpropagation
         optimizer.step()  # Atualizar pesos
+        loss.backward()  # Executar backpropagation
+        optimizer.step()  # Atualizar pesos
 
+        if verbose and (batch_idx % 500 == 0):  # Mostra logs a cada 500 batches
+            print(f'Batch {batch_idx + 1}/{len(train_loader)} - Loss: {loss.item()}')
         if verbose and (batch_idx % 500 == 0):  # Mostra logs a cada 500 batches
             print(f'Batch {batch_idx + 1}/{len(train_loader)} - Loss: {loss.item()}')
 
         # Usar o próprio output em vez de `sum` e `item` para maior precisão
         model_output_list.append(output.mean().cpu().item())
         rating_list.append(rating.mean().cpu().item())
+        # Usar o próprio output em vez de `sum` e `item` para maior precisão
+        model_output_list.append(output.mean().cpu().item())
+        rating_list.append(rating.mean().cpu().item())
 
     # Calcular média de perda
+    # Calcular média de perda
     avg_loss = total_loss / len(train_loader)
+
+    # Calcular RMSE usando sklearn
+    rmse = metrics.mean_squared_error(rating_list, model_output_list, squared=False)
+
+    return avg_loss, rmse
+
 
     # Calcular RMSE usando sklearn
     rmse = metrics.mean_squared_error(rating_list, model_output_list, squared=False)
