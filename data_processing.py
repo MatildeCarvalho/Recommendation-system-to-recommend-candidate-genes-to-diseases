@@ -4,7 +4,7 @@ import torch
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from torch.utils.data import Dataset, DataLoader
-
+import os
 class DiseaseGeneDatase(Dataset):
     def __init__(self, diseases, genes, ei):
         self.diseases = diseases
@@ -85,6 +85,10 @@ def create_datasets(train_df, val_df, test_df):
     return train_dataset, val_dataset, test_dataset
 
 def save_datasets(train_df, val_df, test_df, lbl_diseases, lbl_genes):
+    # Ensure the directory exists
+    output_dir = 'data\\file_storage'
+    os.makedirs(output_dir, exist_ok=True)
+
     # Convertendo a coluna 'geneNID' para string e removendo o ponto decimal
     # Converta a coluna 'geneNID' para valores numéricos, e os não numéricos serão convertidos para NaN
     train_df['geneNID'] = pd.to_numeric(train_df['geneNID'], errors='coerce')

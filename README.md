@@ -8,7 +8,7 @@ This repository contains the implementation of a recommendation system, named Re
 
 ## Thesis
 
-The work presented here is a component of my Master's thesis titled *"Candidate disease gene prediction: a deep learning approach"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](link_para_a_tese).
+The work presented here is a component of my Master's thesis titled *"Candidate disease gene prediction: a deep learning approach"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](http://hdl.handle.net/10400.5/95452).
 
 ## Key Features:
 
@@ -39,7 +39,7 @@ The work presented here is a component of my Master's thesis titled *"Candidate 
 
 ## How to use
 
-Run the [main.py](model/main.py) file. 
+Run the [main.py](main.py) file. 
 
 You must provide credits to the original author including the author's name and a link to the original project in all copies or substantial portions of the Software and Code.
 
@@ -60,7 +60,7 @@ Este projeto é licenciado sob a [Licença XYZ](LICENSE). -->
 
 ## Contact
 
-If you have questions or suggestions about the project, please contact me <!--at [your-email@example.com](mailto:your-email@example.com).-->
+If you have questions or suggestions about the project, please contact me. <!--at [your-email@example.com](mailto:your-email@example.com).-->
 
 ## Project Status
 
