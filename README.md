@@ -8,7 +8,7 @@ This repository contains the implementation of a recommendation system, named Re
 
 ## Thesis
 
-The work presented here is a component of my Master's thesis titled *"Candidate disease gene prediction: a deep learning approach"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](http://hdl.handle.net/10400.5/95452).
+The work presented here is a component of my Master's thesis titled *"Candidate disease gene prediction: a deep learning approach"*. The thesis provides a comprehensive overview of the project, including the research objectives, methodologies, and detailed results. You can access the full thesis [here](https://repositorio.ulisboa.pt/handle/10400.5/95452).
 
 ## Key Features:
 
